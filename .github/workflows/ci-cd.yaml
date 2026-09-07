@@ -30,4 +30,4 @@ jobs:
 
     - name: Build i Pokretanje Testova
       working-directory: ./ticket-booking-system/reservation-service
-      run: ./mvnw clean test
+      run: ./mvn clean test
