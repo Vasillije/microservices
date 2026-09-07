@@ -4,11 +4,11 @@ on:
   push:
     branches: [ "main" ]
     paths:
-      - 'reservation-service/**'   # Okida se samo ako ima izmena u ovom folderu
+      - 'ticket-booking-system/reservation-service/**'
   pull_request:
     branches: [ "main" ]
     paths:
-      - 'reservation-service/**'
+      - 'ticket-booking-system/reservation-service/**'
 
 jobs:
   build-and-test:
@@ -25,6 +25,9 @@ jobs:
         distribution: 'temurin'
         cache: maven
 
+    - name: Dodaj izvršna prava za mvnw
+      run: chmod +x ticket-booking-system/reservation-service/mvnw
+
     - name: Build i Pokretanje Testova
-      working-directory: ./reservation-service   # Ulazi u folder servisa
+      working-directory: ./ticket-booking-system/reservation-service
       run: ./mvnw clean test
