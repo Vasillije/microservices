@@ -1,0 +1,24 @@
+[Korisnik] --(1. Reserve)---> [Reservation Service (Java)]
+                                     |
+                         (Upisuje u Redis + DB)
+                                     |
+                        Publikuje: `ReservationCreated`
+                                     |
+                                 [ Kafka ]
+                                     |
+                                     v
+                        [ Payment Service (Python) ]
+                                     |
+                         (Procesira uspeh/neuspeh)
+                                     |
+                +--------------------+--------------------+
+                |                                         |
+     (Uspeh: `PaymentSucceeded`)              (Greška: `PaymentFailed`)
+                |                                         |
+                v                                         v
+   [Reservation Service (Java)]             [Reservation Service (Java)]
+   • Status sedišta -> `SOLD`               • Status sedišta -> `AVAILABLE`
+                |                           • Oslobađa Redis Lock
+                v                           (Kompenzaciona akcija)
+   [Analytics Worker (Python)]
+   • Generiše PDF + Šalje Mail

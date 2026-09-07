@@ -1,0 +1,30 @@
+name: Java CI with Maven - Reservation Service
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'reservation-service/**'   # Okida se samo ako ima izmena u ovom folderu
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - 'reservation-service/**'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout koda
+      uses: actions/checkout@v4
+
+    - name: Setuj Java 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+
+    - name: Build i Pokretanje Testova
+      working-directory: ./reservation-service   # Ulazi u folder servisa
+      run: ./mvnw clean test

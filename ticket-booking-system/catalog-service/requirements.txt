@@ -1,0 +1,17 @@
+# Web framework za izradu REST API-ja i automatsku Swagger dokumentaciju
+fastapi
+
+# ASGI web server za pokretanje FastAPI aplikacije
+uvicorn[standard]
+
+# Asinhroni drajver za komunikaciju sa MongoDB bazom
+motor
+
+# Validacija podataka, definisanje DTO modela i tipizacija
+pydantic
+
+# Bezbedno upravljanje konfiguracijom i varijablama okruženja
+pydantic-settings
+
+# Učitavanje tajni i podešavanja iz local .env fajla
+python-dotenv

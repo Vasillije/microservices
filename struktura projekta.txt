@@ -1,0 +1,23 @@
+ticket-booking-microservices/       <-- Glavni (Root) folder projekta
+├── docker-compose.yml               <-- OVDE STOJI MAIN DOCKER COMPOSE FAJL
+├── README.md                        
+│
+├── catalog-service/                 <-- Python (FastAPI) + MongoDB
+│   ├── app/
+│   ├── Dockerfile                   <-- Dockerfile samo za ovaj servis
+│   └── requirements.txt
+│
+├── reservation-service/             <-- Java (Spring Boot) + Postgres + Redis
+│   ├── src/
+│   ├── Dockerfile                   <-- Dockerfile samo za ovaj servis
+│   └── pom.xml
+│
+├── payment-service/                 <-- Python (FastAPI) + Postgres
+│   ├── app/
+│   ├── Dockerfile                   <-- Dockerfile samo za ovaj servis
+│   └── requirements.txt
+│
+└── gateway-service/                 <-- Spring Cloud Gateway
+    ├── src/
+    ├── Dockerfile                   <-- Dockerfile samo za ovaj servis
+    └── pom.xml
