@@ -18,7 +18,6 @@ public class ReservationKafkaListener {
 
     private static final Logger log = LoggerFactory.getLogger(ReservationKafkaListener.class);
 
-    // URL tvog FastAPI Catalog servisa
     private static final String FASTAPI_RELEASE_URL = "http://localhost:8000/release";
 
     private final ReservationRepository reservationRepository;
@@ -43,11 +42,9 @@ public class ReservationKafkaListener {
             log.info("SAGA uspeh: Rezervacija ID={} je uspesno POTVRĐENA.", reservation.getId());
 
         } else if ("PAYMENT_FAILED".equalsIgnoreCase(event.getEventType())) {
-            // 1. Otkazujemo rezervaciju u PostgreSQL bazi
             reservation.setStatus("CANCELLED");
             reservationRepository.save(reservation);
 
-            // 2. SAGA Kompenzacija: Pozivamo FastAPI /release da vrati zauzete karte
             try {
                 Map<String, Object> requestBody = new HashMap<>();
                 requestBody.put("eventId", reservation.getEventId());
