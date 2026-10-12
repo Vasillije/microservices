@@ -6,17 +6,14 @@ from app.database import get_database  # <-- Uvozimo funkciju iz app.database
 async def reserve_ticket_capacity(
     event_id: str, ticket_category_name: str, quantity: int
 ):
-    # 1. Pozivamo funkciju da dobijemo konekciju sa bazom
     db = get_database()
 
-    # 2. Provera validnosti ObjectId-ja
     if not ObjectId.is_valid(event_id):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Neispravan Event ID",
         )
 
-    # 3. Atomska provera i smanjenje kapaciteta u MongoDB-ju
     result = await db.events.update_one(
         {
             "_id": ObjectId(event_id),
@@ -26,7 +23,6 @@ async def reserve_ticket_capacity(
         {"$inc": {"ticket_categories.$.available_quantity": -quantity}},
     )
 
-    # 4. Provera ishoda operacije
     if result.modified_count == 0:
         event = await db.events.find_one({"_id": ObjectId(event_id)})
         if not event:
@@ -50,7 +46,6 @@ async def release_ticket_capacity(event_id: str, ticket_category_name: str, quan
     if not ObjectId.is_valid(event_id):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Neispravan Event ID")
 
-    # Uvećavamo available_quantity za vraćenu količinu (+quantity)
     result = await db.events.update_one(
         {
             "_id": ObjectId(event_id),
