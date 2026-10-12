@@ -72,18 +72,15 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public Reservation createReservation(CreateReservationDto dto) {
-        // Ključ zaključavanja vezujemo za eventId
         String lockKey = "lock:event:" + dto.getEventId();
         RLock lock = redissonClient.getLock(lockKey);
 
         try {
-            // Čekamo najviše 5s da dobijemo lock, automatski se oslobađa posle 10s
             boolean isLocked = lock.tryLock(5, 10, TimeUnit.SECONDS);
             if (!isLocked) {
                 throw new RuntimeException("Sistem je trenutno zauzet. Pokušajte ponovo.");
             }
 
-            // --- KRITIČNA ZONA (Zaključano za isti eventId) ---
             FastApiReserveRequestDto fastApiDto = new FastApiReserveRequestDto(
                     dto.getEventId(),
                     dto.getTicketCategory(),
@@ -106,8 +103,7 @@ public class ReservationServiceImpl implements ReservationService {
 
             Reservation savedReservation = reservationRepository.save(reservation);
 
-            //Kreiranje DTO-a i slanje dogadjaja na Kafku
-            Double totalAmount = dto.getQuantity() * 50.0; // Izračunaj cenu ili stavi odgovarajući iznos
+            Double totalAmount = dto.getQuantity() * 50.0; // Izracunaj cenu ili stavi odgovarajući iznos
 
             ReservationCreatedEventDto eventDto = new ReservationCreatedEventDto(
                     savedReservation.getId(),
@@ -126,7 +122,6 @@ public class ReservationServiceImpl implements ReservationService {
             Thread.currentThread().interrupt();
             throw new RuntimeException("Nit je prekinuta.");
         } finally {
-            // Uvek oslobađamo lock u finally bloku
             if (lock.isHeldByCurrentThread()) {
                 lock.unlock();
             }
@@ -151,7 +146,6 @@ public class ReservationServiceImpl implements ReservationService {
                 throw new RuntimeException("Sistem je zauzet. Pokušajte ponovo.");
             }
 
-            // --- KRITIČNA ZONA ---
             if (dto.getQuantity() != null && !dto.getQuantity().equals(reservation.getQuantity())) {
                 int oldQuantity = reservation.getQuantity();
                 int newQuantity = dto.getQuantity();
